@@ -2,9 +2,11 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from .models import *
 from django.contrib.auth import authenticate
+from rest_framework.permissions import IsAuthenticated
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
+    permission_classes = [IsAuthenticated]
     
     def create(self,validated_data):
         user= get_user_model().objects.create_user(
@@ -45,5 +47,7 @@ class LoginSerializer(serializers.Serializer):
             "id":user.id,
             
         }
+        
+
     
         

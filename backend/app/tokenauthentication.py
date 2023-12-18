@@ -36,13 +36,14 @@ class JWTAuthentication(BaseAuthentication):
     
     def extract_token(self,request):
         auth_header = request.headers.get('Authorization')
-        if auth_header and auth_header.strip().startswith('Bearer'):
-            return auth_header.split("Bearer ")[1]
+        if auth_header and auth_header.strip().startswith('Bearer '):
+            return auth_header.split(" ")[1]
         return None
     
     @staticmethod
     def generate_token(payload):
-        expiation = datetime.utcnow() + timedelta(hours=24)
-        payload['exp'] = expiation
-        token = jwt.encode(payload=payload,key = settings.SECRET_KEY,algorithm = 'HS256')
+        expiration = datetime.utcnow() + timedelta(hours=24)
+        payload['exp'] = expiration
+        token = jwt.encode(payload=payload, key=settings.SECRET_KEY, algorithm='HS256')
         return token
+

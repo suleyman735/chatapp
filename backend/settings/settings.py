@@ -37,6 +37,7 @@ CORS_ALLOWED_ORIGINS = [
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -45,7 +46,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "corsheaders",
     'app',
+    'chats',
     'channels',
+    'rest_framework',
+    'allauth',
+    'rest_framework.authtoken',
     
 ]
 
@@ -53,6 +58,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     "corsheaders.middleware.CorsMiddleware",
+    # 'rest_framework.authtoken.middleware.TokenMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -60,7 +66,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     
     
+    
 ]
+CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins (unsafe for production)
 
 ROOT_URLCONF = 'settings.urls'
 
@@ -82,7 +90,18 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'settings.wsgi.application'
+# WSGI_APPLICATION = 'settings.wsgi.application'
+ASGI_APPLICATION ="settings.asgi.websocket_application"
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            # Adjust the following configuration according to your Redis setup
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 
 
 # Database
@@ -133,14 +152,25 @@ CHANNEL_LAYERS = {
 
 REST_FRAMEWORK = {
     'DDEFAULT_AUTHENTICATION_CLASSES':[
-      'app.tokenauthentication.JWTAuthentication'  
+      'app.tokenauthentication.JWTAuthentication',
+      'rest_framework.authentication.TokenAuthentication', 
+      'rest_framework.authentication.BasicAuthentication',
+      'rest_framework.authentication.SessionAuthentication',
+      'rest_framework_simplejwt.authentication.JWTAuthentication',
+      
+ 
     ],
-    'DEFAULT_RENDERER_CLASSES': (
-        'rest_framework.renderers.JSONRenderer',
-    ),
-    'DEFAULT_PARSER_CLASSES': (
-        'rest_framework.parsers.JSONParser',
-    ),
+    # 'DEFAULT_RENDERER_CLASSES': (
+    #     'rest_framework.renderers.JSONRenderer',
+    # ),
+    # 'DEFAULT_PARSER_CLASSES': (
+    #     'rest_framework.parsers.JSONParser',
+    # ),
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.IsAuthenticated',
+    #     # Add other permissions if needed
+    # ],
+
 }
 # CACHES = {
 #     'default': {
@@ -174,3 +204,4 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+CORS_ALLOW_CREDENSTIALS = True
